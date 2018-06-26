@@ -1,7 +1,7 @@
 /*!
 * jquery.checklist - Transform select box into radio list or checkbox list
 *
-* v0.0.0 - 2018-06-26
+* v0.0.1 - 2018-06-26
 *
 * tandan.com.vn
 * License: MIT
@@ -33,9 +33,11 @@
 		}
 	};
 
-	var inputNameSequense = 0;
+	$.checklist = {
+		defaultTemplate: '<div class="ckl-container">\n\t{{#if opts.actionsBox}}\n\t<div ckl-actions>\n\t\t{{#if multiple}}\n\t\t<button type="button" ckl-select-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{opts.selectAllText}}</button>\n\t\t{{/if}}\n\t\t<button type="button" ckl-deselect-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{#if multiple}}{{opts.deselectAllText}}{{else}}{{opts.deselectText}}{{/if}}</button>\n\t</div>\n\t{{/if}}\n\t<ul>\n\t\t{{#each items}}\n\t\t<li ckl-item>\n\t\t\t<input ckl-input value="{{value}}" name="{{../inputName}}" type="{{../inputType}}" {{#if ../disabled}}disabled{{/if}}/>\n\t\t\t{{text}}\n\t\t</li>\n\t\t{{/each}}\n\t</ul>\n\t</div>'
+	};
 
-	var DEFAULT_TMPL = '<div class="ckl-container">\n{{#if opts.actionsBox}}\n<div ckl-actions>\n\t{{#if multiple}}\n\t<button type="button" ckl-select-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{opts.selectAllText}}</button>\n\t{{/if}}\n\t<button type="button" ckl-deselect-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{#if multiple}}{{opts.deselectAllText}}{{else}}{{opts.deselectText}}{{/if}}</button>\n</div>\n{{/if}}\n<ul>\n\t{{#each items}}\n\t<li ckl-item>\n\t\t<input ckl-input value="{{value}}" name="{{../inputName}}" type="{{../inputType}}" {{#if ../disabled}}disabled{{/if}}/>\n\t\t{{text}}\n\t</li>\n\t{{/each}}\n</ul>\n</div>';
+	var inputNameSequense = 0;
 
 	/**
 	 * init plugin
@@ -45,12 +47,13 @@
 	 * @param {string='Deselect All'} opts.deselectAllText - The text on the button that deselects all options when actionsBox is enabled.
 	 * @param {string='Deselect'} opts.deselectText - The text on the button that deselects options when actionsBox is enabled.
 	 * @param {string} opts.template - template
+	 * @param {object|function} ajax
 	 */
 	var init = function init(opts) {
 		this.each(function (_, item) {
 
 			var mopts = $.extend({
-				template: DEFAULT_TMPL,
+				template: $.checklist.defaultTemplate,
 				selectAllText: "Select All",
 				deselectAllText: "Deselect All",
 				deselectText: "Deselect"

@@ -15,26 +15,28 @@ $.fn.checklist = function(...args){
 	}
 };
 
-let inputNameSequense = 0;
-
-const DEFAULT_TMPL = `<div class="ckl-container">
-{{#if opts.actionsBox}}
-<div ckl-actions>
-	{{#if multiple}}
-	<button type="button" ckl-select-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{opts.selectAllText}}</button>
+$.checklist = {
+	defaultTemplate: `<div class="ckl-container">
+	{{#if opts.actionsBox}}
+	<div ckl-actions>
+		{{#if multiple}}
+		<button type="button" ckl-select-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{opts.selectAllText}}</button>
+		{{/if}}
+		<button type="button" ckl-deselect-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{#if multiple}}{{opts.deselectAllText}}{{else}}{{opts.deselectText}}{{/if}}</button>
+	</div>
 	{{/if}}
-	<button type="button" ckl-deselect-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{#if multiple}}{{opts.deselectAllText}}{{else}}{{opts.deselectText}}{{/if}}</button>
-</div>
-{{/if}}
-<ul>
-	{{#each items}}
-	<li ckl-item>
-		<input ckl-input value="{{value}}" name="{{../inputName}}" type="{{../inputType}}" {{#if ../disabled}}disabled{{/if}}/>
-		{{text}}
-	</li>
-	{{/each}}
-</ul>
-</div>`;
+	<ul>
+		{{#each items}}
+		<li ckl-item>
+			<input ckl-input value="{{value}}" name="{{../inputName}}" type="{{../inputType}}" {{#if ../disabled}}disabled{{/if}}/>
+			{{text}}
+		</li>
+		{{/each}}
+	</ul>
+	</div>`
+};
+
+let inputNameSequense = 0;
 
 /**
  * init plugin
@@ -50,7 +52,7 @@ const init = function(opts) {
 	this.each((_, item) => {
 
 		const mopts = $.extend({
-			template: DEFAULT_TMPL,
+			template: $.checklist.defaultTemplate,
 			selectAllText: "Select All",
 			deselectAllText: "Deselect All",
 			deselectText: "Deselect"
