@@ -44,6 +44,7 @@ const DEFAULT_TMPL = `<div class="ckl-container">
  * @param {string='Deselect All'} opts.deselectAllText - The text on the button that deselects all options when actionsBox is enabled.
  * @param {string='Deselect'} opts.deselectText - The text on the button that deselects options when actionsBox is enabled.
  * @param {string} opts.template - template
+ * @param {object|function} ajax
  */
 const init = function(opts) {
 	this.each((_, item) => {

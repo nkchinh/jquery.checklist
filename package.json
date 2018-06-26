@@ -1,8 +1,8 @@
 {
   "name": "jquery.checklist",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Transform select box into radio list or checkbox list",
-  "main": "src/main.js",
+  "main": "dist/jquery.checklist.js",
   "browser": "dist/jquery.checklist.js",
   "author": "Chinh Nguyen",
   "website": "tandan.com.vn",
