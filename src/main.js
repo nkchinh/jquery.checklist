@@ -156,7 +156,7 @@ const funcs = {
 		}
 
 		if(item._ckl_ctx){
-			return item._ckl_ctx.$ele.inputVal()[this._ckl_ctx.inputName];
+			return item._ckl_ctx.$ele.inputVal()[item._ckl_ctx.inputName];
 		}
 	},
 	setValue: function(val){
