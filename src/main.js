@@ -118,35 +118,55 @@ const init = function(opts) {
 
 const funcs = {
 	selectAll: function(){
-		if(this._ckl_ctx){
-			this._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', true);
-		}
+		this.each((_, item) => {
+			if(item._ckl_ctx){
+				item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', true);
+			}
+		});
+		return this;
 	},
 	deselectAll: function(){
-		if(this._ckl_ctx){
-			this._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', false);
-		}
+		this.each((_, item) => {
+			if(item._ckl_ctx){
+				item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', false);
+			}
+		});
+		return this;
 	},
 	disable: function(){
-		if(this._ckl_ctx){
-			this._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', true);
-		}
+		this.each((_, item) => {
+			if(item._ckl_ctx){
+				item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', true);
+			}
+		});
+		return this;
 	},
 	enable: function(){
-		if(this._ckl_ctx){
-			this._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', false);
-		}
+		this.each((_, item) => {
+			if(item._ckl_ctx){
+				item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', false);
+			}
+		});
+		return this;
 	},
 	getValue: function(){
-		if(this._ckl_ctx){
-			this._ckl_ctx.$ele.inputVal()[this._ckl_ctx.inputName];
+		const item = this[0];
+		if(!item){
+			return;
+		}
+
+		if(item._ckl_ctx){
+			return item._ckl_ctx.$ele.inputVal()[this._ckl_ctx.inputName];
 		}
 	},
 	setValue: function(val){
-		if(this._ckl_ctx){
-			const value = {};
-			value[this._ckl_ctx.inputName] = val;
-			this._ckl_ctx.$ele.inputVal(value);
-		}
+		this.each((_, item) => {
+			if(item._ckl_ctx){
+				const value = {};
+				value[item._ckl_ctx.inputName] = val;
+				item._ckl_ctx.$ele.inputVal(value);
+			}
+		});
+		return this;
 	}
 };

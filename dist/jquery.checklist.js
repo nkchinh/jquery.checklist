@@ -1,7 +1,7 @@
 /*!
 * jquery.checklist - Transform select box into radio list or checkbox list
 *
-* v0.0.1 - 2018-06-26
+* v0.0.1 - 2018-06-27
 *
 * tandan.com.vn
 * License: MIT
@@ -118,36 +118,56 @@
 
 	var funcs = {
 		selectAll: function selectAll() {
-			if (this._ckl_ctx) {
-				this._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', true);
-			}
+			this.each(function (_, item) {
+				if (item._ckl_ctx) {
+					item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', true);
+				}
+			});
+			return this;
 		},
 		deselectAll: function deselectAll() {
-			if (this._ckl_ctx) {
-				this._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', false);
-			}
+			this.each(function (_, item) {
+				if (item._ckl_ctx) {
+					item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', false);
+				}
+			});
+			return this;
 		},
 		disable: function disable() {
-			if (this._ckl_ctx) {
-				this._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', true);
-			}
+			this.each(function (_, item) {
+				if (item._ckl_ctx) {
+					item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', true);
+				}
+			});
+			return this;
 		},
 		enable: function enable() {
-			if (this._ckl_ctx) {
-				this._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', false);
-			}
+			this.each(function (_, item) {
+				if (item._ckl_ctx) {
+					item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', false);
+				}
+			});
+			return this;
 		},
 		getValue: function getValue() {
-			if (this._ckl_ctx) {
-				this._ckl_ctx.$ele.inputVal()[this._ckl_ctx.inputName];
+			var item = this[0];
+			if (!item) {
+				return;
+			}
+
+			if (item._ckl_ctx) {
+				return item._ckl_ctx.$ele.inputVal()[this._ckl_ctx.inputName];
 			}
 		},
 		setValue: function setValue(val) {
-			if (this._ckl_ctx) {
-				var value = {};
-				value[this._ckl_ctx.inputName] = val;
-				this._ckl_ctx.$ele.inputVal(value);
-			}
+			this.each(function (_, item) {
+				if (item._ckl_ctx) {
+					var value = {};
+					value[item._ckl_ctx.inputName] = val;
+					item._ckl_ctx.$ele.inputVal(value);
+				}
+			});
+			return this;
 		}
 	};
 
