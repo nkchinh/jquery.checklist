@@ -50,7 +50,7 @@
 	 * @param {object|function} ajax
 	 */
 	var init = function init(opts) {
-		this.each(function (_, item) {
+		this.each(function (_, element) {
 
 			var mopts = $.extend({
 				template: $.checklist.defaultTemplate,
@@ -59,12 +59,11 @@
 				deselectText: "Deselect"
 			}, opts);
 
-			var _el = $(item);
+			var _el = $(element);
 			var multiple = _el.prop("multiple");
-
 			var inputName = _el.attr('name') || '_ckl_' + inputNameSequense;
-			inputNameSequense++;
 			_el.removeAttr('name').hide();
+			inputNameSequense++;
 
 			var context = {
 				opts: mopts,
@@ -74,45 +73,9 @@
 				disabled: _el.prop('disabled')
 			};
 
-			(function () {
-				if (mopts.hasOwnProperty("ajax")) {
-					if (typeof mopts.ajax === "function") {
-						return mopts.ajax();
-					}
+			element._ckl_ctx = context;
 
-					return new Promise(function (resolve, reject) {
-						$.ajax(mopts.ajax).done(resolve).fail(reject);
-					});
-				}
-
-				return Promise.resolve(_el.find("option").map(function (_, item) {
-					var $it = $(item);
-
-					return {
-						value: $it.attr('value'),
-						text: $it.text()
-					};
-				}).toArray());
-			})().then(function (data) {
-				context.items = data;
-
-				var tmpl = handlebars.Handlebars.compile(mopts.template);
-				var html = tmpl(context);
-				var eles = $(html);
-
-				_el.after(eles);
-				_el[0]._ckl_ctx = $.extend({
-					$ele: eles
-				}, context);
-
-				eles.find('[ckl-select-all]').click(function () {
-					eles.find('input:radio,input:checkbox').prop('checked', true);
-				});
-
-				eles.find('[ckl-deselect-all]').click(function () {
-					eles.find('input:radio,input:checkbox').prop('checked', false);
-				});
-			});
+			funcs.refresh.call(_el);
 		});
 	};
 
@@ -158,6 +121,8 @@
 			if (item._ckl_ctx) {
 				return item._ckl_ctx.$ele.inputVal()[item._ckl_ctx.inputName];
 			}
+
+			return this.val();
 		},
 		setValue: function setValue(val) {
 			this.each(function (_, item) {
@@ -168,7 +133,106 @@
 				}
 			});
 			return this;
+		},
+		refresh: function refresh() {
+			return Promise.all(this.map(function (_, element) {
+				var _el = $(element);
+				var context = element._ckl_ctx;
+				if (!context) {
+					return Promise.resolve();
+				}
+
+				var selected = getSelected(element);
+				var mopts = context.opts;
+
+				// remove old elements
+				if (context.$ele) {
+					context.$ele.remove();
+					context.$ele = undefined;
+				}
+
+				return function () {
+					if (mopts.hasOwnProperty("ajax")) {
+						if (typeof mopts.ajax === "function") {
+							return mopts.ajax();
+						}
+
+						return new Promise(function (resolve, reject) {
+							$.ajax(mopts.ajax).done(resolve).fail(reject);
+						});
+					}
+
+					return Promise.resolve(_el.find("option").map(function (_, item) {
+						var $it = $(item);
+
+						return {
+							value: $it.attr('value'),
+							text: $it.text()
+						};
+					}).toArray());
+				}().then(function (data) {
+					if (!data) {
+						data = [];
+					}
+
+					var _iteratorNormalCompletion = true;
+					var _didIteratorError = false;
+					var _iteratorError = undefined;
+
+					try {
+						for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+							var item = _step.value;
+
+							item._chklst_selected = selected.indexOf("" + item.value) > -1;
+						}
+					} catch (err) {
+						_didIteratorError = true;
+						_iteratorError = err;
+					} finally {
+						try {
+							if (!_iteratorNormalCompletion && _iterator.return) {
+								_iterator.return();
+							}
+						} finally {
+							if (_didIteratorError) {
+								throw _iteratorError;
+							}
+						}
+					}
+
+					context.items = data;
+
+					var tmpl = handlebars.Handlebars.compile(mopts.template);
+					var html = tmpl(context);
+					var eles = $(html);
+
+					_el.after(eles);
+					context.$ele = eles;
+
+					eles.find('[ckl-select-all]').click(function () {
+						eles.find('input:radio,input:checkbox').prop('checked', true);
+					});
+
+					eles.find('[ckl-deselect-all]').click(function () {
+						eles.find('input:radio,input:checkbox').prop('checked', false);
+					});
+				});
+			}));
 		}
+	};
+
+	var getSelected = function getSelected(ele) {
+		var selected = funcs.getValue.call($(ele));
+
+		if (!$(ele).prop('multiple')) {
+			if (selected === null || selected === undefined) {
+				selected = [];
+			} else {
+				selected = [selected];
+			}
+		}
+
+		return selected;
 	};
 
 })));

@@ -49,7 +49,7 @@ let inputNameSequense = 0;
  * @param {object|function} ajax
  */
 const init = function(opts) {
-	this.each((_, item) => {
+	this.each((_, element) => {
 
 		const mopts = $.extend({
 			template: $.checklist.defaultTemplate,
@@ -58,12 +58,11 @@ const init = function(opts) {
 			deselectText: "Deselect"
 		}, opts);
 
-		const _el = $(item);
+		const _el = $(element);
 		const multiple = _el.prop("multiple");
-
 		const inputName = _el.attr('name') || '_ckl_' + inputNameSequense;
-		inputNameSequense ++;
 		_el.removeAttr('name').hide();
+		inputNameSequense ++;
 
 		const context = {
 			opts: mopts,
@@ -73,46 +72,9 @@ const init = function(opts) {
 			disabled: _el.prop('disabled')
 		};
 
-		(() => {
-			if(mopts.hasOwnProperty("ajax")) {
-				if(typeof mopts.ajax === "function"){
-					return mopts.ajax();
-				} 
+		element._ckl_ctx = context;
 
-				return new Promise((resolve, reject) => {
-					$.ajax(mopts.ajax).done(resolve).fail(reject);
-				});
-			} 
-
-			return Promise.resolve(_el.find("option").map((_, item) => {
-				const $it = $(item);
-
-				return {
-					value: $it.attr('value'),
-					text: $it.text()
-				};
-			}).toArray());
-		})()
-		.then(data => {
-			context.items = data;
-
-			const tmpl = Handlebars.compile(mopts.template);
-			const html = tmpl(context);
-			const eles = $(html);
-
-			_el.after(eles);
-			_el[0]._ckl_ctx = $.extend({
-				$ele: eles
-			}, context);
-
-			eles.find('[ckl-select-all]').click(() => {
-				eles.find('input:radio,input:checkbox').prop('checked', true);
-			});
-
-			eles.find('[ckl-deselect-all]').click(() => {
-				eles.find('input:radio,input:checkbox').prop('checked', false);
-			});
-		});
+		funcs.refresh.call(_el);
 	});
 };
 
@@ -157,7 +119,9 @@ const funcs = {
 
 		if(item._ckl_ctx){
 			return item._ckl_ctx.$ele.inputVal()[item._ckl_ctx.inputName];
-		}
+		} 
+
+		return this.val();
 	},
 	setValue: function(val){
 		this.each((_, item) => {
@@ -168,5 +132,84 @@ const funcs = {
 			}
 		});
 		return this;
+	},
+	refresh: function() {
+		return Promise.all(this.map((_, element) => {
+			const _el = $(element);
+			const context = element._ckl_ctx;
+			if(!context){
+				return Promise.resolve();
+			}
+
+			const selected = getSelected(element);
+			const mopts = context.opts;
+
+			// remove old elements
+			if(context.$ele){
+				context.$ele.remove();
+				context.$ele = undefined;
+			}
+
+			return (() => {
+				if(mopts.hasOwnProperty("ajax")) {
+					if(typeof mopts.ajax === "function"){
+						return mopts.ajax();
+					} 
+	
+					return new Promise((resolve, reject) => {
+						$.ajax(mopts.ajax).done(resolve).fail(reject);
+					});
+				} 
+	
+				return Promise.resolve(_el.find("option").map((_, item) => {
+					const $it = $(item);
+	
+					return {
+						value: $it.attr('value'),
+						text: $it.text()
+					};
+				}).toArray());
+			})()
+			.then(data => {
+				if(!data){
+					data = [];
+				}
+	
+				for (const item of data){
+					item._chklst_selected = selected.indexOf("" + item.value) > -1;
+				}
+	
+				context.items = data;
+	
+				const tmpl = Handlebars.compile(mopts.template);
+				const html = tmpl(context);
+				const eles = $(html);
+	
+				_el.after(eles);
+				context.$ele = eles;
+	
+				eles.find('[ckl-select-all]').click(() => {
+					eles.find('input:radio,input:checkbox').prop('checked', true);
+				});
+	
+				eles.find('[ckl-deselect-all]').click(() => {
+					eles.find('input:radio,input:checkbox').prop('checked', false);
+				});
+			});
+		}));
 	}
+};
+
+const getSelected = function(ele) {
+	let selected = funcs.getValue.call($(ele));
+
+	if(!$(ele).prop('multiple')){
+		if(selected === null || selected === undefined) {
+			selected = [];
+		} else {
+			selected = [selected];
+		}
+	}
+
+	return selected;
 };
