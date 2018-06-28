@@ -1,7 +1,7 @@
 /*!
 * jquery.checklist - Transform select box into radio list or checkbox list
 *
-* v0.0.1 - 2018-06-27
+* v0.0.1 - 2018-06-28
 *
 * tandan.com.vn
 * License: MIT
@@ -82,32 +82,40 @@
 	var funcs = {
 		selectAll: function selectAll() {
 			this.each(function (_, item) {
-				if (item._ckl_ctx) {
+				if (item._ckl_ctx && item._ckl_ctx.$ele) {
 					item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', true);
+				} else if ($(item).prop('multiple')) {
+					$(item).find('option').prop('selected', true);
 				}
 			});
 			return this;
 		},
 		deselectAll: function deselectAll() {
 			this.each(function (_, item) {
-				if (item._ckl_ctx) {
+				if (item._ckl_ctx && item._ckl_ctx.$ele) {
 					item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', false);
+				} else {
+					$(item).find('option').prop('selected', false);
 				}
 			});
 			return this;
 		},
 		disable: function disable() {
 			this.each(function (_, item) {
-				if (item._ckl_ctx) {
+				if (item._ckl_ctx && item._ckl_ctx.$ele) {
 					item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', true);
+				} else {
+					$(item).prop('disabled', true);
 				}
 			});
 			return this;
 		},
 		enable: function enable() {
 			this.each(function (_, item) {
-				if (item._ckl_ctx) {
+				if (item._ckl_ctx && item._ckl_ctx.$ele) {
 					item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', false);
+				} else {
+					$(item).prop('disabled', false);
 				}
 			});
 			return this;
@@ -118,7 +126,7 @@
 				return;
 			}
 
-			if (item._ckl_ctx) {
+			if (item._ckl_ctx && item._ckl_ctx.$ele) {
 				return item._ckl_ctx.$ele.inputVal()[item._ckl_ctx.inputName];
 			}
 
@@ -126,10 +134,12 @@
 		},
 		setValue: function setValue(val) {
 			this.each(function (_, item) {
-				if (item._ckl_ctx) {
+				if (item._ckl_ctx && item._ckl_ctx.$ele) {
 					var value = {};
 					value[item._ckl_ctx.inputName] = val;
 					item._ckl_ctx.$ele.inputVal(value);
+				} else {
+					$(item).val(val);
 				}
 			});
 			return this;

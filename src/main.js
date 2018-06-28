@@ -81,32 +81,48 @@ const init = function(opts) {
 const funcs = {
 	selectAll: function(){
 		this.each((_, item) => {
-			if(item._ckl_ctx){
-				item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', true);
+			if(item._ckl_ctx && item._ckl_ctx.$ele){
+				item._ckl_ctx.$ele
+					.find('input:radio,input:checkbox')
+					.prop('checked', true);
+			} else if($(item).prop('multiple')) {
+				$(item).find('option').prop('selected', true);
 			}
 		});
 		return this;
 	},
 	deselectAll: function(){
 		this.each((_, item) => {
-			if(item._ckl_ctx){
-				item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('checked', false);
+			if(item._ckl_ctx && item._ckl_ctx.$ele){
+				item._ckl_ctx.$ele
+					.find('input:radio,input:checkbox')
+					.prop('checked', false);
+			} else {
+				$(item).find('option').prop('selected', false);
 			}
 		});
 		return this;
 	},
 	disable: function(){
 		this.each((_, item) => {
-			if(item._ckl_ctx){
-				item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', true);
+			if(item._ckl_ctx && item._ckl_ctx.$ele){
+				item._ckl_ctx.$ele
+					.find('input:radio,input:checkbox')
+					.prop('disabled', true);
+			} else {
+				$(item).prop('disabled', true);
 			}
 		});
 		return this;
 	},
 	enable: function(){
 		this.each((_, item) => {
-			if(item._ckl_ctx){
-				item._ckl_ctx.$ele.find('input:radio,input:checkbox').prop('disabled', false);
+			if(item._ckl_ctx && item._ckl_ctx.$ele){
+				item._ckl_ctx.$ele
+					.find('input:radio,input:checkbox')
+					.prop('disabled', false);
+			} else {
+				$(item).prop('disabled', false);
 			}
 		});
 		return this;
@@ -117,7 +133,7 @@ const funcs = {
 			return;
 		}
 
-		if(item._ckl_ctx){
+		if(item._ckl_ctx && item._ckl_ctx.$ele){
 			return item._ckl_ctx.$ele.inputVal()[item._ckl_ctx.inputName];
 		} 
 
@@ -125,10 +141,12 @@ const funcs = {
 	},
 	setValue: function(val){
 		this.each((_, item) => {
-			if(item._ckl_ctx){
+			if(item._ckl_ctx && item._ckl_ctx.$ele){
 				const value = {};
 				value[item._ckl_ctx.inputName] = val;
 				item._ckl_ctx.$ele.inputVal(value);
+			} else {
+				$(item).val(val);
 			}
 		});
 		return this;
