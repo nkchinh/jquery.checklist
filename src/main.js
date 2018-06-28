@@ -28,7 +28,7 @@ $.checklist = {
 	<ul>
 		{{#each items}}
 		<li ckl-item>
-			<input ckl-input value="{{value}}" name="{{../inputName}}" type="{{../inputType}}" {{#if ../disabled}}disabled{{/if}}/>
+			<input ckl-input value="{{value}}" name="{{../inputName}}" type="{{../inputType}}" {{#if ../disabled}}disabled{{/if}} {{#if _chklst_selected}}checked{{/if}}/>
 			{{text}}
 		</li>
 		{{/each}}
