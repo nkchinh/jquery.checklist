@@ -176,7 +176,6 @@ const funcs = {
 				return Promise.resolve();
 			}
 
-			const selected = getSelected(element);
 			const mopts = context.opts;
 
 			// remove old elements
@@ -209,6 +208,8 @@ const funcs = {
 				if(!data){
 					data = [];
 				}
+
+				const selected = getSelected(element);
 	
 				for (const item of data){
 					item._chklst_selected = selected.indexOf("" + item.value) > -1;

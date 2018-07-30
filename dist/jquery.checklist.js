@@ -188,7 +188,6 @@
 					return Promise.resolve();
 				}
 
-				var selected = getSelected(element);
 				var mopts = context.opts;
 
 				// remove old elements
@@ -220,6 +219,8 @@
 					if (!data) {
 						data = [];
 					}
+
+					var selected = getSelected(element);
 
 					var _iteratorNormalCompletion = true;
 					var _didIteratorError = false;
