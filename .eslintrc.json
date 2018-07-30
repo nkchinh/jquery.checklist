@@ -1,5 +1,5 @@
 {
-    "extends": "bestpractices",
+    "extends": "airbnb",
     "env": {
         "browser": true,
         "commonjs": true,
@@ -8,7 +8,7 @@
     },
     "parserOptions": {
         "ecmaFeatures": {
-            "jsx": true
+            "jsx": false
         },
         "sourceType": "module"
     },

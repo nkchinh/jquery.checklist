@@ -1,7 +1,7 @@
 /*!
 * jquery.checklist - Transform select box into radio list or checkbox list
 *
-* v0.0.1 - 2018-06-28
+* v0.0.1 - 2018-07-30
 *
 * tandan.com.vn
 * License: MIT
@@ -15,6 +15,26 @@
 }(this, (function ($,handlebars) { 'use strict';
 
 	$ = $ && $.hasOwnProperty('default') ? $['default'] : $;
+
+	var h = {
+		/**
+	  * clear children nodes
+	  * @param {HTMLElement} ele 
+	  */
+		clrChld: function clrChld(ele) {
+			if (!ele) {
+				return;
+			}
+
+			var child = ele.lastChild;
+
+			while (child) {
+				var tmp = child.previousSibling;
+				ele.removeChild(child);
+				child = tmp;
+			}
+		}
+	};
 
 	$.fn.checklist = function () {
 		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -34,7 +54,7 @@
 	};
 
 	$.checklist = {
-		defaultTemplate: '<div class="ckl-container">\n\t{{#if opts.actionsBox}}\n\t<div ckl-actions>\n\t\t{{#if multiple}}\n\t\t<button type="button" ckl-select-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{opts.selectAllText}}</button>\n\t\t{{/if}}\n\t\t<button type="button" ckl-deselect-all class="btn btn-default" {{#if disabled}}disabled{{/if}}>{{#if multiple}}{{opts.deselectAllText}}{{else}}{{opts.deselectText}}{{/if}}</button>\n\t</div>\n\t{{/if}}\n\t<ul>\n\t\t{{#each items}}\n\t\t<li ckl-item>\n\t\t\t<input ckl-input value="{{value}}" name="{{../inputName}}" type="{{../inputType}}" {{#if ../disabled}}disabled{{/if}} {{#if _chklst_selected}}checked{{/if}}/>\n\t\t\t{{text}}\n\t\t</li>\n\t\t{{/each}}\n\t</ul>\n\t</div>'
+		defaultTemplate: "<div class=\"ckl-container\">\n\t{{#if opts.actionsBox}}\n\t<div ckl-actions>\n\t\t{{#if multiple}}\n\t\t<button type=\"button\" ckl-select-all class=\"btn btn-default\" {{#if disabled}}disabled{{/if}}>{{opts.selectAllText}}</button>\n\t\t{{/if}}\n\t\t<button type=\"button\" ckl-deselect-all class=\"btn btn-default\" {{#if disabled}}disabled{{/if}}>{{#if multiple}}{{opts.deselectAllText}}{{else}}{{opts.deselectText}}{{/if}}</button>\n\t</div>\n\t{{/if}}\n\t<ul>\n\t\t{{#each items}}\n\t\t<li ckl-item>\n\t\t\t<input ckl-input value=\"{{value}}\" name=\"{{../inputName}}\" type=\"{{../inputType}}\" {{#if ../disabled}}disabled{{/if}} {{#if _chklst_selected}}checked{{/if}}/>\n\t\t\t{{text}}\n\t\t</li>\n\t\t{{/each}}\n\t</ul>\n\t</div>"
 	};
 
 	var inputNameSequense = 0;
@@ -134,12 +154,28 @@
 		},
 		setValue: function setValue(val) {
 			this.each(function (_, item) {
+				h.clrChld(item);
+				if (!Array.isArray(val)) {
+					var tmp = val;
+					val = [];
+					if (tmp != null) {
+						val.push(tmp);
+					}
+				}
+
+				for (var i = 0; i < val.length; i++) {
+					var opt = document.createElement("option");
+					opt.setAttribute("value", val[i]);
+					opt.setAttribute("selected", "selected");
+					item.appendChild(opt);
+				}
+
+				$(item).val(val);
+
 				if (item._ckl_ctx && item._ckl_ctx.$ele) {
 					var value = {};
 					value[item._ckl_ctx.inputName] = val;
 					item._ckl_ctx.$ele.inputVal(value);
-				} else {
-					$(item).val(val);
 				}
 			});
 			return this;

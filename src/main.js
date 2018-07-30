@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { Handlebars } from "handlebars";
+import h from "./helpers";
 
 $.fn.checklist = function(...args){
 	if (typeof args[0] === 'string') {
@@ -141,12 +142,28 @@ const funcs = {
 	},
 	setValue: function(val){
 		this.each((_, item) => {
+			h.clrChld(item);
+			if(!Array.isArray(val)){
+				var tmp = val;
+				val = [];
+				if(tmp != null){
+					val.push(tmp);
+				}
+			}
+
+			for(var i = 0; i < val.length; i++) {
+				var opt = document.createElement("option");
+				opt.setAttribute("value", val[i]);
+				opt.setAttribute("selected", "selected");
+				item.appendChild(opt);
+			}
+
+			$(item).val(val);
+			
 			if(item._ckl_ctx && item._ckl_ctx.$ele){
 				const value = {};
 				value[item._ckl_ctx.inputName] = val;
 				item._ckl_ctx.$ele.inputVal(value);
-			} else {
-				$(item).val(val);
 			}
 		});
 		return this;
