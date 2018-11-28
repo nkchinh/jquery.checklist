@@ -1,7 +1,7 @@
 /*!
 * jquery.checklist - Transform select box into radio list or checkbox list
 *
-* v0.0.1 - 2018-07-30
+* v0.0.1 - 2018-11-28
 *
 * tandan.com.vn
 * License: MIT
@@ -255,6 +255,23 @@
 
 					_el.after(eles);
 					context.$ele = eles;
+
+					eles.on('change', '[ckl-item] input', function () {
+						var val = funcs.getValue.apply(_el);
+						if (val) {
+							if (!Array.isArray(val)) {
+								val = [val];
+							}
+
+							_el.html($.map(val, function (v) {
+								return "<option value=\"" + v + "\" selected></>";
+							}).join(''));
+						} else {
+							_el.html('');
+						}
+
+						_el.trigger('change');
+					});
 
 					eles.find('[ckl-select-all]').click(function () {
 						eles.find('input:radio,input:checkbox').prop('checked', true);

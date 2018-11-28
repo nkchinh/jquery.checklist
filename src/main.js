@@ -223,6 +223,21 @@ const funcs = {
 	
 				_el.after(eles);
 				context.$ele = eles;
+
+				eles.on('change', '[ckl-item] input', () => {
+					var val = funcs.getValue.apply(_el);
+					if(val){
+						if(!Array.isArray(val)) {
+							val = [val];
+						}
+
+						_el.html($.map(val, v => `<option value="${v}" selected></>`).join(''));
+					} else {
+						_el.html('');
+					}
+
+					_el.trigger('change');
+				});
 	
 				eles.find('[ckl-select-all]').click(() => {
 					eles.find('input:radio,input:checkbox').prop('checked', true);
