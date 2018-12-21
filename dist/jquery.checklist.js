@@ -146,7 +146,7 @@
 				return;
 			}
 
-			if (item._ckl_ctx && item._ckl_ctx.$ele) {
+			if (item._ckl_ctx && item._ckl_ctx.$ele && item._ckl_ctx.$ele.find('[name="' + item._ckl_ctx.inputName + '"]').length) {
 				return item._ckl_ctx.$ele.inputVal()[item._ckl_ctx.inputName];
 			}
 
