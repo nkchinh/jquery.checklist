@@ -62,7 +62,7 @@ const init = function(opts) {
 		const _el = $(element);
 		const multiple = _el.prop("multiple");
 		const inputName = _el.attr('name') || '_ckl_' + inputNameSequense;
-		_el.removeAttr('name').hide();
+		_el.hide();
 		inputNameSequense ++;
 
 		const context = {
@@ -207,6 +207,12 @@ const funcs = {
 			.then(data => {
 				if(!data){
 					data = [];
+				}
+
+				if(data.length) {
+					_el.removeAttr('name');
+				} else {
+					_el.attr('name', context.inputName);
 				}
 
 				const selected = getSelected(element);

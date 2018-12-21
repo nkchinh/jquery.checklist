@@ -1,7 +1,7 @@
 /*!
 * jquery.checklist - Transform select box into radio list or checkbox list
 *
-* v0.0.1 - 2018-11-28
+* v0.0.1 - 2018-12-21
 *
 * tandan.com.vn
 * License: MIT
@@ -82,7 +82,7 @@
 			var _el = $(element);
 			var multiple = _el.prop("multiple");
 			var inputName = _el.attr('name') || '_ckl_' + inputNameSequense;
-			_el.removeAttr('name').hide();
+			_el.hide();
 			inputNameSequense++;
 
 			var context = {
@@ -218,6 +218,12 @@
 				}().then(function (data) {
 					if (!data) {
 						data = [];
+					}
+
+					if (data.length) {
+						_el.removeAttr('name');
+					} else {
+						_el.attr('name', context.inputName);
 					}
 
 					var selected = getSelected(element);
