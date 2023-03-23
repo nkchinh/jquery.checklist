@@ -1,7 +1,7 @@
 /*!
 * jquery.checklist - Transform select box into radio list or checkbox list
 *
-* v0.0.1 - 2018-12-21
+* v0.0.1 - 2023-03-23
 *
 * tandan.com.vn
 * License: MIT
@@ -49,7 +49,7 @@
 
 			console.error(args[0] + ' is not a function.');
 		} else {
-			init.apply(this, args);
+			return init.apply(this, args);
 		}
 	};
 
@@ -70,6 +70,7 @@
 	 * @param {object|function} ajax
 	 */
 	var init = function init(opts) {
+		var pms = [];
 		this.each(function (_, element) {
 
 			var mopts = $.extend({
@@ -95,8 +96,10 @@
 
 			element._ckl_ctx = context;
 
-			funcs.refresh.call(_el);
+			pms.push(funcs.refresh.call(_el));
 		});
+
+		return Promise.all(pms);
 	};
 
 	var funcs = {
@@ -279,11 +282,11 @@
 						_el.trigger('change');
 					});
 
-					eles.find('[ckl-select-all]').click(function () {
+					eles.find('[ckl-select-all]').on('click', function () {
 						eles.find('input:radio,input:checkbox').prop('checked', true);
 					});
 
-					eles.find('[ckl-deselect-all]').click(function () {
+					eles.find('[ckl-deselect-all]').on('click', function () {
 						eles.find('input:radio,input:checkbox').prop('checked', false);
 					});
 				});

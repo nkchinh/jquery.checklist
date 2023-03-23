@@ -12,7 +12,7 @@ $.fn.checklist = function(...args){
 		console.error(args[0] + ' is not a function.');
 		
 	} else {
-		init.apply(this, args);
+		return init.apply(this, args);
 	}
 };
 
@@ -50,6 +50,7 @@ let inputNameSequense = 0;
  * @param {object|function} ajax
  */
 const init = function(opts) {
+	var pms = [];
 	this.each((_, element) => {
 
 		const mopts = $.extend({
@@ -75,8 +76,10 @@ const init = function(opts) {
 
 		element._ckl_ctx = context;
 
-		funcs.refresh.call(_el);
+		pms.push(funcs.refresh.call(_el));
 	});
+
+	return Promise.all(pms);
 };
 
 const funcs = {
@@ -245,11 +248,11 @@ const funcs = {
 					_el.trigger('change');
 				});
 	
-				eles.find('[ckl-select-all]').click(() => {
+				eles.find('[ckl-select-all]').on('click', () => {
 					eles.find('input:radio,input:checkbox').prop('checked', true);
 				});
 	
-				eles.find('[ckl-deselect-all]').click(() => {
+				eles.find('[ckl-deselect-all]').on('click', () => {
 					eles.find('input:radio,input:checkbox').prop('checked', false);
 				});
 			});
